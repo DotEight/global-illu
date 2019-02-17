@@ -8,7 +8,6 @@ struct Material {
     constexpr explicit Material(glm::dvec3 color, int type)
     : color(std::move(color)), type(type) {}
 
-
     typedef enum Type {
         Diffuse,
         DiffuseSpecular,

@@ -29,25 +29,24 @@ class RayTracer {
         for (int y = 0; y < h && _running; ++y) {
             for (int x = 0; x < w && _running; ++x) {
                 // TODO Implement this
-                float px = (2 * ((x + 0.5) / w) - 1) * tan(45 / 2 * M_PI / 180);
-                float py = (1 - 2 * ((y + 0.5) / h)) * tan(45 / 2 * M_PI / 180);
-                dvec3 worldPixel =  {-1, py, px};
+
+                float px = (2 * ((x + 0.5) / w) - 1);
+                float py = (1 - 2 * ((y + 0.5) / h));
+                dvec3 worldPixel =  {px, 1, py};
 
                 dvec3 dir = glm::normalize(worldPixel - _camera.pos);
-
-                Ray ray = Ray(_camera.pos, dir);
+                Ray ray = Ray(_camera.pos, worldPixel);
 
                 std::vector<Entity*> objects = _scene->intersect(ray);
                 for (Entity* object : objects) {
+
                     dvec3 intersect;
                     dvec3 normal;
+
                     if(object->intersect(ray, intersect, normal)) {
                         _image->setPixel(x, y, object->material.color);
                     }
                 }
-
-
-
             }
         }
     }
