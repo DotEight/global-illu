@@ -99,50 +99,45 @@ struct Triangle: public Entity{
 // TODO Implement implicit sphere
 struct Sphere: public Entity{
 
-    Sphere() : Entity(), center(vec3(0,0,0)), radius(1) {}
-    Sphere(glm::vec3 center, float radius, Material& material)
+    Sphere() : Entity(), center(dvec3(0,0,0)), radius(1) {}
+    Sphere(glm::dvec3 center, float radius, Material& material)
             : Entity(material), center(center), radius(radius) {}
 
-    glm::vec3 normal(const glm::vec3& position) {
+    glm::dvec3 normal(const glm::dvec3& position) const {
         return glm::normalize((position - center) / radius);
     }
 
     bool intersect(const Ray &ray, glm::dvec3 &intersect, glm::dvec3 &normal) const override {
 
-        float dx = ray.dir.x;
-        float dy = ray.dir.y;
-        float dz = ray.dir.z;
+        double t0, t1;
+        dvec3 dir = ray.dir;
+        dvec3 origin = ray.origin;
 
-        float a = dx*dx + dy*dy + dz*dz;
+        dvec3 L = origin - this->center;
+        double a = glm::dot(dir, dir);
+        double b = 2 * glm::dot(dir, L);
+        double c = glm::dot(L, L) - sqrt(this->radius);
 
-        float b = 2 * dx*(ray.origin.x - center.x)
-                  + 2 * dy*(ray.origin.y - center.y)
-                  + 2 * dz*(ray.origin.z - center.z);
+        double disc = b*b - 4 * a*c;
 
-        float c = center.x*center.x
-                  + center.y*center.y
-                  + center.z*center.z
-                  + ray.origin.x*ray.origin.x
-                  + ray.origin.y*ray.origin.y
-                  + ray.origin.z*ray.origin.z
-                  - 2 * (center.x*ray.origin.x + center.y*ray.origin.y + center.z*ray.origin.z)
-                  - radius*radius;
-
-        float disc = b*b - 4 * a*c;
-
-        // No intersection
-        if (disc < 0) {
-            return false;
+        if (disc < 0) return false;
+        else if (disc == 0) t0 = t1 = - 0.5 * b / a;
+        else {
+            double q = (b > 0) ?
+                      -0.5 * (b + sqrt(disc)) :
+                      -0.5 * (b - sqrt(disc));
+            t0 = q / a;
+            t1 = c / q;
         }
-        // Ray tangent or intersects in two points
-        float t = (-b - sqrt(disc)) / (2 * a);
-        if (t < 0) {
-            return false;
+        if (t0 > t1) std::swap(t0, t1);
+
+        if (t0 < 0) {
+            t0 = t1; // if t0 is negative, let's use t1 instead
+            if (t0 < 0) return false; // both t0 and t1 are negative
         }
 
-        intersect.x = ray.origin.x + t * dx;
-        intersect.y = ray.origin.y + t * dy;
-        intersect.z = ray.origin.z + t * dz;
+        intersect = ray.origin + t0 * ray.dir;
+        normal = this->normal(intersect);
 
         return true;
 
@@ -153,8 +148,8 @@ struct Sphere: public Entity{
         return aabb;
     };
 
-    glm::vec3 center;
-    float radius;
+    glm::dvec3 center;
+    double radius;
 };
 // TODO Implement explicit sphere (triangles)
 // TODO Implement explicit quad (triangles)

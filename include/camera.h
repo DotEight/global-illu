@@ -5,10 +5,11 @@
 /// Represents the camera with information about the 'sensor' size.
 struct Camera {
     explicit Camera(glm::dvec3 pos) : Camera(pos, {0, 0, 0}) {}
-    Camera(glm::dvec3 pos, glm::dvec3 lookAt) : pos(pos), up({0, 0, 1.0}), forward(lookAt - pos) {
+    Camera(glm::dvec3 pos, glm::dvec3 lookAt) : pos(pos), up({0, 1, 0}),lookAt(lookAt), forward(pos-lookAt) {
         forward = glm::normalize(forward);
     }
 
+    glm::dvec3 lookAt;
     glm::dvec3 pos;
     glm::dvec3 up;
     glm::dvec3 forward;              // normalized vector of the view direction

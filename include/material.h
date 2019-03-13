@@ -6,7 +6,9 @@
 /// probably be extended to allow more options.
 struct Material {
     constexpr explicit Material(glm::dvec3 color, int type)
-    : color(std::move(color)), type(type) {}
+    : color(std::move(color)), type(type) {
+
+    }
 
     typedef enum Type {
         Diffuse,
@@ -17,5 +19,7 @@ struct Material {
 
     int type;
     glm::dvec3 color;
-
+    glm::dvec3 albedo = {0.18,0.18,0.18};
+    double Kd = 0.8;
+    double Ks = 0.2;
 };

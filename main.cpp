@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
     const vec3 SHADOW_COLOR = 0.0f * vec3(1, 1, 1);
     const vec3 VOID_COLOR(0.75, 0.75, 0.75);
 
-    Camera camera({0, 0, 0}, {-10,0,0});
+    Camera camera({0, 0, 10}, {0,0,0});
     glm::dvec3 light{10, 10, 10};
 
     RayTracer raytracer(camera, light);
@@ -31,12 +31,12 @@ int main(int argc, char** argv) {
     Octree scene({-20, -20, -20}, {20, 20, 20});
     // TODO Add objects to the scene
     Material diffuseBlue(dvec3(0.10, 0.10,1), Material::Diffuse);
-    Material diffuseRed(dvec3(1, 0.10,0.10), Material::Diffuse);
+    Material diffuseRed(dvec3(1, 0.10,0.10), Material::Specular);
     Material diffuseGreen(dvec3(0.10, 1,1), Material::Diffuse);
 
-    Entity* s1 = new Sphere(vec3(0,3,1), 0.5, diffuseBlue);
-    Entity* s2 = new Sphere(vec3(0,5,0), 0.25, diffuseRed);
-    Entity* s3 = new Sphere(vec3(0,2,-1.5), 0.1, diffuseGreen);
+    Entity* s1 = new Sphere(dvec3(-2,0,0), 4, diffuseBlue);
+    Entity* s2 = new Sphere(dvec3(1,0,0), 2, diffuseRed);
+    Entity* s3 = new Sphere(dvec3(4,0,0), 1, diffuseGreen);
     scene.push_back(s1);
     scene.push_back(s2);
     scene.push_back(s3);
